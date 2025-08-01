@@ -52,17 +52,26 @@
     </div>
 
     <!-- Quiz Screen -->
-    <div id="quiz-screen" class="hidden space-y-4">
-      <div class="flex justify-between text-sm text-gray-300">
-        <span><i class="fas fa-coins mr-1"></i>Coins: <span id="coin-count">0</span></span>
-        <span><i class="fas fa-stopwatch mr-1"></i>Time Left: <span id="timer">15</span>s</span>
-      </div>
-      <h2 id="question" class="text-lg font-semibold"></h2>
-      <div id="answers" class="grid gap-3"></div>
-      <button id="next-btn" class="bg-blue-600 hover:bg-blue-700 w-full py-2 rounded hidden">
-        <i class="fas fa-arrow-right mr-2"></i>Next
-      </button>
-    </div>
+  <div id="quiz-screen" class="hidden space-y-4">
+  <div class="flex justify-between text-sm text-gray-300">
+    <span><i class="fas fa-coins mr-1"></i>Coins: <span id="coin-count">0</span></span>
+    <span><i class="fas fa-layer-group mr-1"></i>Difficulty: <span id="difficulty-label" class="capitalize">-</span></span>
+    <span><i class="fas fa-stopwatch mr-1"></i>Time Left: <span id="timer">15</span>s</span>
+  </div>
+
+  <h2 id="question" class="text-lg font-semibold"></h2>
+  <div id="answers" class="grid gap-3"></div>
+
+  <div class="text-sm text-gray-400 text-right">
+    Question <span id="question-number">1</span> of <span id="total-questions">20</span>
+  </div>
+
+  <button id="next-btn" class="bg-blue-600 hover:bg-blue-700 w-full py-2 rounded">
+    <i class="fas fa-arrow-right mr-2"></i>Next
+  </button>
+</div>
+
+
 
     <!-- Result Screen -->
     <div id="result-screen" class="hidden text-center space-y-4">
