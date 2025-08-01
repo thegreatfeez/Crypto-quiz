@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Crypto Quiz Quest</title>
-  <script src="questions.js" defer></script>
-  <script src="script.js" defer></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -25,7 +23,14 @@
           <li><i class="fas fa-gamepad mr-1"></i>Select your difficulty level: Easy, Normal, or Hard</li>
           <li><i class="fas fa-clock mr-1"></i>20 questions per round, 15 seconds each</li>
           <li><i class="fas fa-coins mr-1"></i>Earn coins: Easy (1), Normal (3), Hard (7)</li>
-          <li><i class="fas fa-certificate mr-1"></i>Score 70%+ to earn a certification</li>
+          <li><i class="fas fa-gem mr-1 text-purple-400"></i>
+      Score 70%+ to earn a crypto NFT badge:
+          <ul class="ml-5 list-disc text-sm text-gray-300 mt-1 space-y-1">
+        <li>🥉 Bronze Level NFT – for Easy</li>
+     <li>💎 Diamond Level NFT – for Normal</li>
+     <li>🏆 Platinum Level NFT – for Hard</li>
+  </ul>
+</li>
           <li><i class="fas fa-hourglass-half mr-1"></i>Cooldown between attempts: 10 mins</li>
         </ul>
       </div>
@@ -71,7 +76,7 @@
         <i class="fas fa-redo mr-2"></i>Try Again
       </button>
     </div>
-
   </div>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
