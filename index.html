@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crypto Quiz Quest</title>
+  <script src="questions.js" defer></script>
+  <script src="script.js" defer></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-white font-sans min-h-screen flex items-center justify-center p-4">
+  <div id="app" class="w-full max-w-2xl bg-gray-800 rounded-xl p-6 shadow-xl">
+
+    <!-- Start Screen -->
+    <div id="start-screen" class="space-y-4">
+      <h1 class="text-2xl font-bold text-center text-yellow-400">
+        <i class="fas fa-coins text-yellow-400 mr-2"></i>Crypto Quiz Quest
+      </h1>
+      <p class="text-sm text-center">Wallet ID: <span id="wallet-id" class="text-green-400"></span></p>
+
+      <div class="text-sm bg-gray-700 p-4 rounded-lg space-y-2">
+        <p><strong><i class="fas fa-scroll mr-1"></i>Rules:</strong></p>
+        <ul class="list-disc list-inside">
+          <li><i class="fas fa-gamepad mr-1"></i>Select your difficulty level: Easy, Normal, or Hard</li>
+          <li><i class="fas fa-clock mr-1"></i>20 questions per round, 15 seconds each</li>
+          <li><i class="fas fa-coins mr-1"></i>Earn coins: Easy (1), Normal (3), Hard (7)</li>
+          <li><i class="fas fa-certificate mr-1"></i>Score 70%+ to earn a certification</li>
+          <li><i class="fas fa-hourglass-half mr-1"></i>Cooldown between attempts: 10 mins</li>
+        </ul>
+      </div>
+
+      <div class="text-sm text-center">
+        <label for="difficulty" class="block mb-2 font-medium">
+          <i class="fas fa-signal mr-1"></i>Choose Level
+        </label>
+        <select id="difficulty" class="w-full p-2 bg-gray-900 text-white border border-gray-600 rounded">
+          <option value="easy">Easy (HTML, CSS, basics)</option>
+          <option value="normal">Normal (JS, React, mid-level Crypto)</option>
+          <option value="hard">Hard (Solidity, Smart Contracts, Cryptography)</option>
+        </select>
+      </div>
+
+      <button id="start-btn" class="bg-green-600 hover:bg-green-700 w-full py-2 rounded">
+        <i class="fas fa-play mr-2"></i>Start Quiz
+      </button>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div id="quiz-screen" class="hidden space-y-4">
+      <div class="flex justify-between text-sm text-gray-300">
+        <span><i class="fas fa-coins mr-1"></i>Coins: <span id="coin-count">0</span></span>
+        <span><i class="fas fa-stopwatch mr-1"></i>Time Left: <span id="timer">15</span>s</span>
+      </div>
+      <h2 id="question" class="text-lg font-semibold"></h2>
+      <div id="answers" class="grid gap-3"></div>
+      <button id="next-btn" class="bg-blue-600 hover:bg-blue-700 w-full py-2 rounded hidden">
+        <i class="fas fa-arrow-right mr-2"></i>Next
+      </button>
+    </div>
+
+    <!-- Result Screen -->
+    <div id="result-screen" class="hidden text-center space-y-4">
+      <h2 class="text-2xl font-bold text-yellow-300">
+        <i class="fas fa-trophy mr-2 text-yellow-300"></i>Quiz Complete!
+      </h2>
+      <p>Your Score: <span id="final-score"></span>/20</p>
+      <p>Total Coins: <span id="total-coins"></span> <i class="fas fa-coins text-yellow-400"></i></p>
+      <p id="feedback" class="text-lg font-semibold"></p>
+      <button id="retry-btn" class="bg-gray-700 hover:bg-gray-600 py-2 px-4 rounded">
+        <i class="fas fa-redo mr-2"></i>Try Again
+      </button>
+    </div>
+
+  </div>
+</body>
+</html>
