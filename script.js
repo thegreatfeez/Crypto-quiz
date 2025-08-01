@@ -56,13 +56,11 @@ diffilcultyLabel.innerHTML += selectedDifficulty
 const allQuestions = questionBank[selectedDifficulty].questions;
 const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
 questionSet = shuffled.slice(0, 20);
-console.log(questionSet);
 startScreen.classList.add('hidden')
 quizScreen.classList.remove('hidden')
 
 showQuestion()
 });
-
 
 
 function showQuestion() {
@@ -84,9 +82,28 @@ function showQuestion() {
     button.dataset.index = idx;
     answersEl.appendChild(button);
   });
-
-  console.log(currentQuestion);
 }
+document.addEventListener('click', function(e){
+  if(e.target.dataset.index){
+    const selectedOption = e.target.textContent
+    const currentQuestion = questionSet[currentQuestionIndex];
+    const correctOption = currentQuestion.answer
+    
+    let answer;
+
+if (selectedOption === correctOption) {
+  answer = "correct answer";
+  score++
+} else {
+  answer = "wrong answer";
+}
+    console.log(answer)
+    console.log(score)
+  }
+  }
+)
+
+
 
 function nextQuestion(){
  currentQuestionIndex++
