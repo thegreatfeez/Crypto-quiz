@@ -19,6 +19,7 @@ const totalCoinsEl      = document.getElementById("total-coins");
 const difficultySelect  = document.getElementById("difficulty");
 const difficultyLabel   = document.getElementById("difficulty-label");
 const questionNumber    = document.getElementById("question-number");
+const nftDisplay        = document.getElementById("nft-display");
 
 
 let currentQuestionIndex = 0;
@@ -148,10 +149,21 @@ nextBtn.addEventListener('click', nextQuestion);
 doneBtn.addEventListener('click', () => {
   quizScreen.classList.add('hidden');
   resultScreen.classList.remove('hidden');
+  const nftBox = document.getElementById('nft-image');
+
+  if (score >= 1) {
+    nftDisplay.classList.remove('hidden');
+    if (selectedDifficulty === 'hard') {
+      nftBox.style.backgroundImage = "url('/NFT/platinum.png')";
+    } else if (selectedDifficulty === 'normal') {
+      nftBox.style.backgroundImage = "url('/NFT/diamond.png')";
+    } else if (selectedDifficulty === 'easy') {
+      nftBox.style.backgroundImage = "url('/NFT/bronze.png')";
+    }
+  }
 });
 
 
 retryBtn.addEventListener('click', () => {
-  resultScreen.classList.add('hidden');
-  startScreen.classList.remove('hidden');
+ location.reload();
 });
