@@ -1,33 +1,33 @@
 import questionBank from "./questionBank.js";
 
-const startScreen       = document.getElementById("start-screen");
-const quizScreen        = document.getElementById("quiz-screen");
-const resultScreen      = document.getElementById("result-screen");
+const startScreen = document.getElementById("start-screen");
+const quizScreen = document.getElementById("quiz-screen");
+const resultScreen = document.getElementById("result-screen");
 
-const startBtn          = document.getElementById("start-btn");
-const nextBtn           = document.getElementById("next-btn");
-const retryBtn          = document.getElementById("retry-btn");
-const doneBtn           = document.getElementById("done-btn");
+const startBtn = document.getElementById("start-btn");
+const nextBtn = document.getElementById("next-btn");
+const retryBtn = document.getElementById("retry-btn");
+const doneBtn = document.getElementById("done-btn");
 
-const questionEl        = document.getElementById("question");
-const answersEl         = document.getElementById("answers");
-const timerEl           = document.getElementById("timer");
-const walletIdEl        = document.getElementById("wallet-id");
-const coinCountEl       = document.getElementById("coin-count");
-const finalScoreEl      = document.getElementById("final-score");
-const totalCoinsEl      = document.getElementById("total-coins");
-const difficultySelect  = document.getElementById("difficulty");
-const difficultyLabel   = document.getElementById("difficulty-label");
-const questionNumber    = document.getElementById("question-number");
-const nftDisplay        = document.getElementById("nft-display");
-
+const questionEl = document.getElementById("question");
+const answersEl = document.getElementById("answers");
+const timerEl = document.getElementById("timer");
+const walletIdEl = document.getElementById("wallet-id");
+const coinCountEl = document.getElementById("coin-count");
+const finalScoreEl = document.getElementById("final-score");
+const totalCoinsEl = document.getElementById("total-coins");
+const difficultySelect = document.getElementById("difficulty");
+const difficultyLabel = document.getElementById("difficulty-label");
+const questionNumber = document.getElementById("question-number");
+const nftDisplay = document.getElementById("nft-display");
 
 let currentQuestionIndex = 0;
 let score = 0;
 let rewardPerQuestion = 0;
 let selectedDifficulty = "";
 let questionSet = [];
-
+let timerInterval;
+let timeLeft = 15;
 
 function generateWalletId() {
   const savedId = localStorage.getItem('walletId');
@@ -44,23 +44,27 @@ function generateWalletId() {
     walletIdEl.textContent = savedId;
   }
 }
-generateWalletId();
 
+function startTimer() {
+  timeLeft = 15;
+  timerEl.textContent = timeLeft;
+  
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    timerEl.textContent = timeLeft;
+    
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      nextQuestion();
+    }
+  }, 1000);
+}
 
-startBtn.addEventListener('click', () => {
-  selectedDifficulty = difficultySelect.value;
-  difficultyLabel.innerHTML += selectedDifficulty;
-
-  const allQuestions = questionBank[selectedDifficulty].questions;
-  const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
-  questionSet = shuffled.slice(0, 20);
-
-  startScreen.classList.add('hidden');
-  quizScreen.classList.remove('hidden');
-
-  showQuestion();
-});
-
+function stopTimer() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+  }
+}
 
 function showQuestion() {
   const currentQuestion = questionSet[currentQuestionIndex];
@@ -80,34 +84,57 @@ function showQuestion() {
     button.dataset.index = idx;
 
     if (option === currentQuestion.answer) {
-    button.dataset.correct = "true";
-  }
+      button.dataset.correct = "true";
+    }
 
     answersEl.appendChild(button);
   });
 }
 
+function nextQuestion() {
+  currentQuestionIndex++;
+  questionNumber.innerHTML = currentQuestionIndex + 1;
+  nextBtn.classList.add('hidden');
+  showQuestion();
+  startTimer();
+}
+
+generateWalletId();
+
+startBtn.addEventListener('click', () => {
+  selectedDifficulty = difficultySelect.value;
+  difficultyLabel.innerHTML += selectedDifficulty;
+
+  const allQuestions = questionBank[selectedDifficulty].questions;
+  const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
+  questionSet = shuffled.slice(0, 20);
+
+  startScreen.classList.add('hidden');
+  quizScreen.classList.remove('hidden');
+
+  startTimer();
+  showQuestion();
+});
 
 answersEl.addEventListener('click', function(e) {
   if (e.target.dataset.index) {
+    stopTimer();
+    
     const selectedOption = e.target.textContent;
     const currentQuestion = questionSet[currentQuestionIndex];
     const correctOption = currentQuestion.answer;
     const correctBtn = document.querySelector('.answer-btn[data-correct="true"]');
 
-    
     const allButtons = answersEl.querySelectorAll('.answer-btn');
     allButtons.forEach(btn => {
       btn.classList.remove('bg-green-600', 'ring', 'ring-green-300');
-      btn.disabled = true
-      btn.classList.add('cursor-not-allowed','opacity-50' )
+      btn.disabled = true;
+      btn.classList.add('cursor-not-allowed', 'opacity-50');
     });
 
-    
     if (selectedOption === correctOption) {
       e.target.classList.add('bg-green-600', 'ring', 'ring-green-300');
 
-    
       if (selectedDifficulty === "easy") {
         rewardPerQuestion += 1;
       } else if (selectedDifficulty === "normal") {
@@ -116,12 +143,11 @@ answersEl.addEventListener('click', function(e) {
         rewardPerQuestion += 7;
       }
       score++;
-    }else if(selectedOption !== correctOption){
-       e.target.classList.add('bg-red-600', 'ring', 'ring-red-300');
+    } else if (selectedOption !== correctOption) {
+      e.target.classList.add('bg-red-600', 'ring', 'ring-red-300');
       correctBtn.classList.add('bg-green-600', 'ring', 'ring-green-300');
     }
 
-    
     if (currentQuestionIndex === 19) {
       doneBtn.classList.remove('hidden');
       nextBtn.classList.add('hidden');
@@ -129,29 +155,23 @@ answersEl.addEventListener('click', function(e) {
       nextBtn.classList.remove('hidden');
     }
 
-    
     coinCountEl.innerHTML = rewardPerQuestion;
     totalCoinsEl.innerHTML = rewardPerQuestion;
     finalScoreEl.innerHTML = score;
   }
 });
 
-
-function nextQuestion() {
-  currentQuestionIndex++;
-  questionNumber.innerHTML = currentQuestionIndex + 1;
-  nextBtn.classList.add('hidden');
-  showQuestion();
-}
 nextBtn.addEventListener('click', nextQuestion);
 
-
 doneBtn.addEventListener('click', () => {
+  stopTimer();
+  
   quizScreen.classList.add('hidden');
   resultScreen.classList.remove('hidden');
   const nftBox = document.getElementById('nft-image');
+  const noNftMessage = document.getElementById('no-nft-message');
 
-  if (score >= 1) {
+  if (score >= 14) {
     nftDisplay.classList.remove('hidden');
     if (selectedDifficulty === 'hard') {
       nftBox.style.backgroundImage = "url('/NFT/platinum.png')";
@@ -160,10 +180,19 @@ doneBtn.addEventListener('click', () => {
     } else if (selectedDifficulty === 'easy') {
       nftBox.style.backgroundImage = "url('/NFT/bronze.png')";
     }
+    
+    const claimBtn = document.getElementById('claim-nft-btn');
+    const claimMessage = document.getElementById('claim-message');
+    
+    claimBtn.addEventListener('click', function() {
+      claimMessage.classList.remove('hidden');
+      claimBtn.classList.add('hidden');
+    });
+  } else {
+    noNftMessage.classList.remove('hidden');
   }
 });
 
-
 retryBtn.addEventListener('click', () => {
- location.reload();
+  location.reload();
 });
