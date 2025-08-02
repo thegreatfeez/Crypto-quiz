@@ -8,6 +8,7 @@ const diffilcultyLabel = document.getElementById('difficulty-label')
 const startBtn = document.getElementById("start-btn");
 const nextBtn = document.getElementById("next-btn");
 const retryBtn = document.getElementById("retry-btn");
+const doneBtn = document.getElementById('done-btn')
 
 const questionEl = document.getElementById("question");
 const answersEl = document.getElementById("answers");
@@ -15,16 +16,15 @@ const timerEl = document.getElementById("timer");
 const walletIdEl = document.getElementById("wallet-id");
 const coinCountEl = document.getElementById("coin-count");
 const finalScoreEl = document.getElementById("final-score");
-const feedbackEl = document.getElementById("feedback");
 const totalCoinsEl = document.getElementById("total-coins");
 const difficultySelect = document.getElementById("difficulty");
 let questionNumber = document.getElementById("question-number")
-const totalQuestions = document.getElementById("total-questions")
+
+
 
 
 let currentQuestionIndex = 0;
 let score = 0;
-let totalCoins = 0;
 let selectedDifficulty = "";
 let questionSet = [];
 let rewardPerQuestion = 0;
@@ -47,10 +47,7 @@ function generateWalletId(){
 generateWalletId()
 
 startBtn.addEventListener('click', function(){
-    selectedDifficulty = difficultySelect.value;
-if (selectedDifficulty === "easy") rewardPerQuestion = 1;
-else if (selectedDifficulty === "normal") rewardPerQuestion = 3;
-else if (selectedDifficulty === "hard") rewardPerQuestion = 7;
+selectedDifficulty = difficultySelect.value;
 diffilcultyLabel.innerHTML += selectedDifficulty
 
 const allQuestions = questionBank[selectedDifficulty].questions;
@@ -83,33 +80,57 @@ function showQuestion() {
     answersEl.appendChild(button);
   });
 }
-document.addEventListener('click', function(e){
-  if(e.target.dataset.index){
+answersEl.addEventListener('click', function(e){
+if(e.target.dataset.index){
     const selectedOption = e.target.textContent
     const currentQuestion = questionSet[currentQuestionIndex];
     const correctOption = currentQuestion.answer
+    console.log("correct answer is: ", correctOption)
     
-    let answer;
+  if (selectedOption === correctOption) {
+      if (selectedDifficulty === "easy") {
+        rewardPerQuestion += 1;
+      } else if (selectedDifficulty === "normal") {
+        rewardPerQuestion += 3;
+      } else if (selectedDifficulty === "hard") {
+        rewardPerQuestion += 7;
+      }
+      score++;
+    }
+    coinCountEl.innerHTML = rewardPerQuestion
+    totalCoinsEl.innerHTML = rewardPerQuestion
+  
 
-if (selectedOption === correctOption) {
-  answer = "correct answer";
-  score++
-} else {
-  answer = "wrong answer";
+if(currentQuestionIndex === 19){
+doneBtn.classList.remove('hidden')
+nextBtn.classList.add('hidden')
 }
-    console.log(answer)
-    console.log(score)
+if(currentQuestionIndex < 19){nextBtn.classList.remove('hidden')}
+
+ 
+  finalScoreEl.innerHTML = score
   }
-  }
-)
+});
 
 
 
 function nextQuestion(){
  currentQuestionIndex++
-    questionNumber.innerHTML = currentQuestionIndex +1 
-    showQuestion()
+  questionNumber.innerHTML = currentQuestionIndex + 1
+  nextBtn.classList.add('hidden')
+  showQuestion()
+  
 }
 nextBtn.addEventListener('click', nextQuestion)
 
+
+doneBtn.addEventListener('click', function(){
+ quizScreen.classList.add('hidden')
+  resultScreen.classList.remove('hidden')
+})
+
+retryBtn.addEventListener('click', function(){
+  document.getElementById('result-screen').classList.add('hidden');
+  document.getElementById('start-screen').classList.remove('hidden');
+})
 
