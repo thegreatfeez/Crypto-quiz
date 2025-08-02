@@ -76,7 +76,7 @@
 
 
 
-   <!-- Result Screen -->
+<!-- Result Screen -->
 <div id="result-screen" class="hidden text-center space-y-4">
   <h2 class="text-2xl font-bold text-yellow-300">
     <i class="fas fa-trophy mr-2 text-yellow-300"></i>Quiz Complete!
@@ -84,8 +84,14 @@
   <p>Your Score: <span id="final-score"></span>/20</p>
   <p>Total Coins: <span id="total-coins"></span> <i class="fas fa-coins text-yellow-400"></i></p>
 
-  <!-- NFT Display (initially hidden) -->
-  <div id="nft-display" class=" mt-4 hidden">
+  
+  <div id="no-nft-message" class="hidden mt-4 text-red-400 font-semibold">
+    Sorry, you didn’t reach the NFT reward threshold.<br />
+    Try again!
+  </div>
+
+
+  <div id="nft-display" class="mt-4 hidden">
     <p class="text-green-400 font-semibold">🎉 You've won an NFT!</p>
     <img id="nft-image" src="" alt="NFT Reward" class="mx-auto w-40 h-40 rounded-lg shadow-lg mt-2" />
     <button id="claim-nft-btn" class="bg-green-600 hover:bg-green-700 py-2 px-4 rounded mt-4 text-white">
@@ -93,11 +99,12 @@
     </button>
   </div>
 
-  <!-- Retry Button -->
+
   <button id="retry-btn" class="bg-gray-700 hover:bg-gray-600 py-2 px-4 rounded text-white">
     <i class="fas fa-redo mr-2"></i>Try Again
   </button>
 </div>
+
 
 
   <script type="module" src="script.js"></script>
