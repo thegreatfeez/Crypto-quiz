@@ -63,29 +63,43 @@
   <div id="answers" class="grid gap-3"></div>
 
   <div class="text-sm text-gray-400 text-right">
-    Question <span id="question-number">1</span> of <span id="total-questions">20</span>
+    Question <span id="question-number">1</span> of <span>20</span>
   </div>
 
-  <button id="next-btn" class="bg-blue-600 hover:bg-blue-700 w-full py-2 rounded">
+  <button id="next-btn" class="bg-blue-600 hover:bg-blue-700 w-full py-2 rounded hidden">
     <i class="fas fa-arrow-right mr-2"></i>Next
   </button>
+  <button id="done-btn" class="bg-green-600 hover:bg-green-700 w-full py-2 rounded hidden">
+  <i class="fas fa-check mr-2"></i>Done
+</button>
 </div>
 
 
 
-    <!-- Result Screen -->
-    <div id="result-screen" class="hidden text-center space-y-4">
-      <h2 class="text-2xl font-bold text-yellow-300">
-        <i class="fas fa-trophy mr-2 text-yellow-300"></i>Quiz Complete!
-      </h2>
-      <p>Your Score: <span id="final-score"></span>/20</p>
-      <p>Total Coins: <span id="total-coins"></span> <i class="fas fa-coins text-yellow-400"></i></p>
-      <p id="feedback" class="text-lg font-semibold"></p>
-      <button id="retry-btn" class="bg-gray-700 hover:bg-gray-600 py-2 px-4 rounded">
-        <i class="fas fa-redo mr-2"></i>Try Again
-      </button>
-    </div>
+   <!-- Result Screen -->
+<div id="result-screen" class="hidden text-center space-y-4">
+  <h2 class="text-2xl font-bold text-yellow-300">
+    <i class="fas fa-trophy mr-2 text-yellow-300"></i>Quiz Complete!
+  </h2>
+  <p>Your Score: <span id="final-score"></span>/20</p>
+  <p>Total Coins: <span id="total-coins"></span> <i class="fas fa-coins text-yellow-400"></i></p>
+
+  <!-- NFT Display (initially hidden) -->
+  <div id="nft-display" class=" mt-4 hidden">
+    <p class="text-green-400 font-semibold">🎉 You've won an NFT!</p>
+    <img id="nft-image" src="" alt="NFT Reward" class="mx-auto w-40 h-40 rounded-lg shadow-lg mt-2" />
+    <button id="claim-nft-btn" class="bg-green-600 hover:bg-green-700 py-2 px-4 rounded mt-4 text-white">
+      <i class="fas fa-gift mr-2"></i>Claim NFT
+    </button>
   </div>
+
+  <!-- Retry Button -->
+  <button id="retry-btn" class="bg-gray-700 hover:bg-gray-600 py-2 px-4 rounded text-white">
+    <i class="fas fa-redo mr-2"></i>Try Again
+  </button>
+</div>
+
+
   <script type="module" src="script.js"></script>
 </body>
 </html>
