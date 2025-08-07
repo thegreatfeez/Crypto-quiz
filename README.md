@@ -1,4 +1,4 @@
-# 🧠 Crypto Quiz Quest
+# 🧠 Web3 Quiz quest
 
 Welcome to **Crypto Quiz Quest** – a web-based crypto education game that rewards knowledge with our native token **$IQX** and exclusive **NFT Badges**. Built with HTML, Tailwind CSS, and JavaScript.
 
