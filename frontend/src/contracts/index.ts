@@ -1,14 +1,11 @@
-export const IQX_ADDRESS = '0xa2e502882f448d7f3bf571d4115a49323981de37' as const
-export const NFT_ADDRESS = '0xdde133b8c6e033bc0321a3a2dd05f0734cec656b' as const
+export const IQX_ADDRESS = '0x99Ea7dCDfDaaA8F90450179Ed12B9B82ef7662A5' as const
+export const NFT_ADDRESS = '0xcEe398BeD8205b47e30bd16e319ADFD94B54A5b6' as const
 
 export const iqxAbi = [
   {
     type: 'function',
     name: 'mint',
-    inputs: [
-      { name: 'to', type: 'address' },
-      { name: 'amount', type: 'uint256' },
-    ],
+    inputs: [{ name: 'amount', type: 'uint256' }],
     outputs: [],
     stateMutability: 'nonpayable',
   },
@@ -26,7 +23,6 @@ export const nftAbi = [
     type: 'function',
     name: 'mint',
     inputs: [
-      { name: 'to', type: 'address' },
       { name: 'tier', type: 'uint8' },
       { name: 'score', type: 'uint8' },
     ],
@@ -61,3 +57,4 @@ export const nftAbi = [
     ],
   },
 ] as const
+

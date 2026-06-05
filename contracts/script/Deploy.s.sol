@@ -7,17 +7,14 @@ import {CryptoQuizNFT} from "../src/CryptoQuizNFT.sol";
 
 contract Deploy is Script {
     function run() external {
-        address deployer = msg.sender;
-
         vm.startBroadcast();
 
-        IQXToken token = new IQXToken(deployer);
-        CryptoQuizNFT nft = new CryptoQuizNFT(deployer);
+        IQXToken token = new IQXToken();
+        CryptoQuizNFT nft = new CryptoQuizNFT();
 
         vm.stopBroadcast();
 
         console.log("IQXToken:     ", address(token));
         console.log("CryptoQuizNFT:", address(nft));
-        console.log("Deployer:     ", deployer);
     }
 }

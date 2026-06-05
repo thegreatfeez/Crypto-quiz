@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import { useAccount, useWaitForTransactionReceipt, useReadContract } from 'wagmi'
-import { parseEventLogs } from 'viem'
-import { NFT_ADDRESS, nftAbi } from '../contracts'
+import { useAccount, useWaitForTransactionReceipt, useReadContract, useWriteContract } from 'wagmi'
+import { parseUnits, parseEventLogs } from 'viem'
+import { NFT_ADDRESS, IQX_ADDRESS, nftAbi, iqxAbi } from '../contracts'
 import WalletStatus from './WalletStatus'
 import type { Difficulty } from '../types'
 
@@ -28,6 +28,8 @@ export default function ResultScreen({ score, totalIQX, tier, onRetry }: ResultS
   const { address, isConnected } = useAccount()
   const qualifiesForNFT = score >= 14
 
+  const { writeContractAsync } = useWriteContract()
+
   const [iqxHash, setIqxHash] = useState<`0x${string}` | undefined>()
   const [nftHash, setNftHash] = useState<`0x${string}` | undefined>()
   const [iqxPending, setIqxPending] = useState(false)
@@ -37,19 +39,16 @@ export default function ResultScreen({ score, totalIQX, tier, onRetry }: ResultS
   const [nftTokenId, setNftTokenId] = useState<bigint | undefined>()
   const [claimError, setClaimError] = useState<string | null>(null)
 
-  // Watch IQX tx on-chain
   const { isSuccess: iqxConfirmed } = useWaitForTransactionReceipt({
     hash: iqxHash,
     query: { enabled: !!iqxHash },
   })
 
-  // Watch NFT tx on-chain
   const { isSuccess: nftConfirmed, data: nftReceipt } = useWaitForTransactionReceipt({
     hash: nftHash,
     query: { enabled: !!nftHash },
   })
 
-  // Check if already claimed on-chain
   const { data: alreadyClaimed, refetch: refetchClaimed } = useReadContract({
     address: NFT_ADDRESS,
     abi: nftAbi,
@@ -58,7 +57,6 @@ export default function ResultScreen({ score, totalIQX, tier, onRetry }: ResultS
     query: { enabled: isConnected && !!address && qualifiesForNFT },
   })
 
-  // Fetch on-chain SVG once we have tokenId
   const { data: tokenURIData } = useReadContract({
     address: NFT_ADDRESS,
     abi: nftAbi,
@@ -76,47 +74,45 @@ export default function ResultScreen({ score, totalIQX, tier, onRetry }: ResultS
       try {
         const logs = parseEventLogs({ abi: nftAbi, eventName: 'NFTMinted', logs: nftReceipt.logs })
         if (logs[0]) setNftTokenId(logs[0].args.tokenId)
-      } catch { /* event parsing is best-effort */ }
+      } catch { /* best-effort */ }
       setNftDone(true)
       refetchClaimed()
     }
   }, [nftConfirmed, nftReceipt, refetchClaimed])
 
   async function handleClaimIQX() {
-    if (!address) return
     setClaimError(null)
     setIqxPending(true)
     try {
-      const res = await fetch('/api/claim-iqx', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address, amount: totalIQX }),
+      const hash = await writeContractAsync({
+        address: IQX_ADDRESS,
+        abi: iqxAbi,
+        functionName: 'mint',
+        args: [parseUnits(totalIQX.toString(), 18)],
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error ?? 'Claim failed')
-      setIqxHash(data.hash)
+      setIqxHash(hash)
     } catch (e: unknown) {
-      setClaimError(e instanceof Error ? e.message : 'Claim failed')
+      const msg = e instanceof Error ? e.message : 'Claim failed'
+      setClaimError(msg.includes('rejected') || msg.includes('denied') ? 'Transaction cancelled.' : msg)
     } finally {
       setIqxPending(false)
     }
   }
 
   async function handleClaimNFT() {
-    if (!address) return
     setClaimError(null)
     setNftPending(true)
     try {
-      const res = await fetch('/api/claim-nft', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address, tier, score }),
+      const hash = await writeContractAsync({
+        address: NFT_ADDRESS,
+        abi: nftAbi,
+        functionName: 'mint',
+        args: [tier, score],
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error ?? 'NFT claim failed')
-      setNftHash(data.hash)
+      setNftHash(hash)
     } catch (e: unknown) {
-      setClaimError(e instanceof Error ? e.message : 'NFT claim failed')
+      const msg = e instanceof Error ? e.message : 'NFT claim failed'
+      setClaimError(msg.includes('rejected') || msg.includes('denied') ? 'Transaction cancelled.' : msg)
     } finally {
       setNftPending(false)
     }
@@ -137,7 +133,6 @@ export default function ResultScreen({ score, totalIQX, tier, onRetry }: ResultS
         <i className="fas fa-coins text-yellow-400"></i>
       </p>
 
-      {/* Wallet connect + live balance */}
       <div className="space-y-2">
         <div className="flex justify-center">
           <appkit-button />
@@ -145,7 +140,6 @@ export default function ResultScreen({ score, totalIQX, tier, onRetry }: ResultS
         <WalletStatus />
       </div>
 
-      {/* Error banner */}
       {claimError && (
         <div className="bg-red-900 border border-red-500 text-red-200 text-sm rounded px-4 py-2 text-left">
           ⚠️ {claimError}
@@ -160,7 +154,7 @@ export default function ResultScreen({ score, totalIQX, tier, onRetry }: ResultS
           className="bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed w-full py-2 rounded text-gray-900 font-bold"
         >
           {iqxPending
-            ? <><i className="fas fa-spinner fa-spin mr-2"></i>Sending transaction…</>
+            ? <><i className="fas fa-spinner fa-spin mr-2"></i>Confirm in wallet…</>
             : iqxHash
             ? <><i className="fas fa-clock mr-2"></i>Waiting for confirmation…</>
             : <><i className="fas fa-coins mr-2"></i>Claim {totalIQX} IQX</>}
@@ -178,7 +172,6 @@ export default function ResultScreen({ score, totalIQX, tier, onRetry }: ResultS
         <div className="space-y-3 border-t border-gray-600 pt-4">
           <p className="text-green-400 font-semibold">🎉 You qualified for the {tierLabel} NFT!</p>
 
-          {/* On-chain SVG (shown after mint + tokenURI loaded) */}
           {svgDataUri ? (
             <div className="flex flex-col items-center gap-1">
               <img
@@ -189,7 +182,6 @@ export default function ResultScreen({ score, totalIQX, tier, onRetry }: ResultS
               <p className="text-xs text-gray-400">On-chain SVG — stored forever on Base</p>
             </div>
           ) : (
-            /* Tier preview box shown before claiming */
             <div className={`mx-auto w-40 h-40 rounded-lg shadow-lg flex items-center justify-center text-5xl ${
               tier === 0 ? 'bg-yellow-900 border border-yellow-600'
               : tier === 1 ? 'bg-blue-900 border border-blue-400'
@@ -209,7 +201,7 @@ export default function ResultScreen({ score, totalIQX, tier, onRetry }: ResultS
                 className="bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed py-2 px-6 rounded text-white font-bold"
               >
                 {nftPending
-                  ? <><i className="fas fa-spinner fa-spin mr-2"></i>Sending transaction…</>
+                  ? <><i className="fas fa-spinner fa-spin mr-2"></i>Confirm in wallet…</>
                   : nftHash
                   ? <><i className="fas fa-clock mr-2"></i>Waiting for confirmation…</>
                   : <><i className="fas fa-gift mr-2"></i>Claim {tierLabel} NFT</>}

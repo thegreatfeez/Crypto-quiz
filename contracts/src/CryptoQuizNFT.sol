@@ -2,14 +2,11 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
-contract CryptoQuizNFT is ERC721, AccessControl {
+contract CryptoQuizNFT is ERC721 {
     using Strings for uint256;
-
-    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
     uint8 public constant BRONZE   = 0;
     uint8 public constant DIAMOND  = 1;
@@ -27,22 +24,20 @@ contract CryptoQuizNFT is ERC721, AccessControl {
 
     event NFTMinted(address indexed to, uint8 tier, uint8 score, uint256 tokenId);
 
-    constructor(address admin) ERC721("CryptoQuiz Badge", "CQBADGE") {
-        _grantRole(DEFAULT_ADMIN_ROLE, admin);
-        _grantRole(MINTER_ROLE, admin);
-    }
+    constructor() ERC721("CryptoQuiz Badge", "CQBADGE") {}
 
-    function mint(address to, uint8 tier, uint8 score) external onlyRole(MINTER_ROLE) {
+    function mint(uint8 tier, uint8 score) external {
         require(tier  <= PLATINUM, "Invalid tier");
+        require(score >= 14,       "Score below threshold");
         require(score <= 20,       "Invalid score");
-        require(!hasClaimed[to][tier], "Already claimed this tier");
+        require(!hasClaimed[msg.sender][tier], "Already claimed this tier");
 
         uint256 tokenId = _nextTokenId++;
-        hasClaimed[to][tier] = true;
-        _tokenData[tokenId]  = TokenData(tier, score, to);
-        _safeMint(to, tokenId);
+        hasClaimed[msg.sender][tier] = true;
+        _tokenData[tokenId]          = TokenData(tier, score, msg.sender);
+        _safeMint(msg.sender, tokenId);
 
-        emit NFTMinted(to, tier, score, tokenId);
+        emit NFTMinted(msg.sender, tier, score, tokenId);
     }
 
     // ── Token URI (fully on-chain) ────────────────────────────────────────────
@@ -166,9 +161,4 @@ contract CryptoQuizNFT is ERC721, AccessControl {
         return string(out);
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        public view override(ERC721, AccessControl) returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
-    }
 }
