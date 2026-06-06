@@ -1,99 +1,107 @@
 # 🧠 Crypto Quiz Quest
 
-Welcome to **Crypto Quiz Quest** – a web-based crypto education game that rewards knowledge with our native token **$IQX** and exclusive **NFT Badges**. Built with HTML, Tailwind CSS, and JavaScript.
+A blockchain-powered trivia game where knowledge earns real on-chain rewards. Answer crypto questions, mint **$IQX tokens**, and claim fully **on-chain SVG NFT badges** directly to your wallet — no backend, no middleman.
+
+🔗 **Live app**: https://crypto-quiz-lake.vercel.app/
 
 ---
 
-## 🚀 How It Works
+## How It Works
 
-**Crypto Quiz Quest** is a 20-question trivia game where users answer multiple-choice questions across 3 difficulty levels:
+20 questions per session across 3 difficulty levels:
 
-- 🟢 Easy – HTML, CSS, Crypto Basics
-- 🟡 Normal – JavaScript, React, Mid-Level Crypto
-- 🔴 Hard – Solidity, Smart Contracts, Cryptography
+| Difficulty | Topic | IQX per Correct | NFT Badge |
+|------------|-------|-----------------|-----------|
+| 🟢 Easy    | HTML, CSS, Crypto Basics | 1 IQX | 🥉 Bronze |
+| 🟡 Normal  | JavaScript, React, Mid-Level Crypto | 3 IQX | 💎 Diamond |
+| 🔴 Hard    | Solidity, Smart Contracts, Cryptography | 7 IQX | 🏆 Platinum |
 
-### 🎯 Objective
-
-Earn **IQX Coins** for every correct answer. Score 70% or above to unlock a limited-edition **NFT Badge**.
+- Score **≥ 70%** (14/20) to qualify for an NFT badge
+- All IQX and NFTs mint directly to `msg.sender` — permissionless, no approval needed
+- NFT art is stored **fully on-chain** as an SVG — no IPFS, no external URLs
 
 ---
 
-## 🎁 Rewards System
+## Tech Stack
 
-| Difficulty | Coin per Correct | NFT Badge |
-|------------|------------------|------------|
-| Easy       | 1 IQX            | 🥉 Bronze NFT  |
-| Normal     | 3 IQX            | 💎 Diamond NFT |
-| Hard       | 7 IQX            | 🏆 Platinum NFT|
+**Frontend**
+- React 18 + TypeScript + Vite
+- [AppKit v1](https://docs.reown.com/appkit/overview) — WalletConnect-based wallet UI
+- [wagmi v2](https://wagmi.sh/) — React hooks for contract reads/writes
+- [viem v2](https://viem.sh/) — EVM utilities
+- Tailwind CSS (CDN) + Font Awesome
+
+**Contracts**
+- Solidity ^0.8.20 + OpenZeppelin
+- Foundry (build, test, deploy)
+- Deployed on **Base Sepolia** (testnet)
+
+---
+
+## Contracts
+
+| Contract | Address (Base Sepolia) |
+|----------|----------------------|
+| IQXToken (ERC-20) | [`0x99Ea7dCDfDaaA8F90450179Ed12B9B82ef7662A5`](https://sepolia.basescan.org/address/0x99Ea7dCDfDaaA8F90450179Ed12B9B82ef7662A5) |
+| CryptoQuizNFT (ERC-721) | [`0xcEe398BeD8205b47e30bd16e319ADFD94B54A5b6`](https://sepolia.basescan.org/address/0xcEe398BeD8205b47e30bd16e319ADFD94B54A5b6) |
+
+**IQXToken** — `mint(uint256 amount)` — permissionless, mints to caller, max 140 IQX per call.
+
+**CryptoQuizNFT** — `mint(uint8 tier, uint8 score)` — requires `score >= 14`, blocks duplicate claims per tier, mints on-chain SVG to caller.
+
+---
+
+## Running Locally
+
+```bash
+# Install dependencies
+cd frontend
+npm install
+
+# Start dev server (wallet connect works locally)
+npm run dev
+```
+
+You'll need a wallet on **Base Sepolia** with testnet ETH:
+- Faucet: https://faucet.quicknode.com/base/sepolia
+
+---
+
+## Running Contract Tests
+
+```bash
+cd contracts
+forge test
+```
+
+All 12 tests pass including: mint guards, duplicate-claim prevention, score threshold enforcement, and on-chain SVG tokenURI validation.
+
+---
+
+## Repo Structure
+
+```
+Crypto-quiz/
+├── frontend/               ← Vite app (Vercel root)
+│   ├── src/
+│   │   ├── components/     ← StartScreen, QuizScreen, ResultScreen, WalletStatus
+│   │   ├── contracts/      ← ABI definitions + deployed addresses
+│   │   ├── config/         ← wagmi + AppKit setup
+│   │   └── data/           ← 90 quiz questions (30 per difficulty)
+│   ├── index.html
+│   └── vercel.json
+└── contracts/              ← Foundry project
+    ├── src/
+    │   ├── IQXToken.sol
+    │   └── CryptoQuizNFT.sol
+    ├── script/Deploy.s.sol
+    └── test/CryptoQuiz.t.sol
+```
 
 ---
 
 ### 💡 Airdrop Note
 
-Whether you win an NFT or not, your participation qualifies you for our **$IQX airdrop** after our official **TGE (Token Generation Event)**.
-
-> **Priority** airdrop allocation goes to NFT holders.
-
----
-
-## 🕹️ Gameplay Rules
-
-- Select your difficulty and start the game.
-- 20 questions per session.
-- Each question has a 15-second countdown.
-- Once you pick an answer, **you cannot change it**.
-- You cannot exit the game mid-session.
-
----
-
-## 📦 Features
-
-- ✅ Wallet ID display (mock for now, can integrate Web3)
-- ⏱ Timed questions (auto-advance on timeout)
-- 🪙 Real-time coin earning tracker
-- 🧠 Final score breakdown
-- 🖼 NFT rewards (visual + logic)
-- 🔁 Retry option
-- 🔒 No answer changes once selected
-- 📨 Claim screen for NFTs + future airdrop text
-
----
-
-### 🎮 Start Screen
-
-- Select difficulty
-- View rules
-- See wallet ID
-
-### ❓ Quiz Screen
-
-- Dynamic question & answers
-- Live timer
-- Coin tracker
-
-### 🏁 Result Screen
-
-- Final score and coins
-- NFT Badge (if qualified)
-- Airdrop info if not
-
----
-
-## 🛠 Tech Stack
-
-- **HTML**
-- **Tailwind CSS**
-- **Vanilla JavaScript**
-- **Font Awesome (for icons)**
-
----
-
-## 🎉 Future Plans
-- 🔗 Web3 wallet integration
-- ⛓️ Smart contract to mint NFTs on-chain
-- 🚀 TGE + token listing
-- 🌐 On-chain claim portal
-- 🏆 Leaderboard & social sharing
- 
+All participants qualify for the **$IQX airdrop** at TGE. NFT holders receive **priority allocation**.
 
 <p align="center"><sub>© 2025 Crypto Quiz Quest. All rights reserved.</sub></p>
