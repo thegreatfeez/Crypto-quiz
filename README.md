@@ -1,6 +1,6 @@
 # 🧠 Crypto Quiz Quest
 
-A blockchain-powered trivia game where knowledge earns real on-chain rewards. Answer crypto questions, mint **$IQX tokens**, and claim fully **on-chain SVG NFT badges** directly to your wallet — no backend, no middleman.
+I built this crypto quiz app while learning frontend development — fake wallet, fake NFTs, fake everything. After learning Solidity, I came back and integrated real smart contracts. It now mints actual **$IQX tokens** and fully **on-chain SVG NFT badges** directly to your wallet.
 
 🔗 **Live app**: https://crypto-quiz-lake.vercel.app/
 
@@ -19,6 +19,17 @@ A blockchain-powered trivia game where knowledge earns real on-chain rewards. An
 - Score **≥ 70%** (14/20) to qualify for an NFT badge
 - All IQX and NFTs mint directly to `msg.sender` — permissionless, no approval needed
 - NFT art is stored **fully on-chain** as an SVG — no IPFS, no external URLs
+
+---
+
+## What Changed
+
+| Before | After |
+|--------|-------|
+| `Math.random()` fake wallet ID | Real wallet via AppKit + WalletConnect |
+| PNG badges in a local folder | Fully on-chain SVG minted to your wallet |
+| "Earn IQX" display text only | Real ERC-20 token minted to `msg.sender` |
+| Vanilla JS, no build step | React + TypeScript + Vite |
 
 ---
 
@@ -54,11 +65,8 @@ A blockchain-powered trivia game where knowledge earns real on-chain rewards. An
 ## Running Locally
 
 ```bash
-# Install dependencies
 cd frontend
 npm install
-
-# Start dev server (wallet connect works locally)
 npm run dev
 ```
 
@@ -74,7 +82,7 @@ cd contracts
 forge test
 ```
 
-All 12 tests pass including: mint guards, duplicate-claim prevention, score threshold enforcement, and on-chain SVG tokenURI validation.
+12 tests — mint guards, duplicate-claim prevention, score threshold, on-chain SVG tokenURI.
 
 ---
 
